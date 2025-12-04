@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     # Library
     'django.contrib.gis',
     'rest_framework',
+    'drf_yasg',
 
     # app
     'users',
@@ -82,24 +84,24 @@ ASGI_APPLICATION = "config.asgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-# Postgis malumotlar baza
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-#         'NAME': os.environ.get('POSTGRES_DB', 'driver'),
-#         'USER': os.environ.get('POSTGRES_USER', 'user_driver'),
-#         'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'password_driver'),
-#         'HOST': os.environ.get('POSTGRES_HOST', 'driver_db'),
-#         'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+# Postgis malumotlar baza
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': os.environ.get('POSTGRES_DB', 'driver'),
+        'USER': os.environ.get('POSTGRES_USER', 'user_driver'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'password_driver'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'driver_db'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+    }
+}
 
 CHANNEL_LAYERS = {
     "default": {
@@ -170,3 +172,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# SIMPLE_JWT = {
+#     'ACCESS_TOKEN_LIFETIME': timedelta(days=365 * 100),  # 100 yil amal qiladi
+#     'REFRESH_TOKEN_LIFETIME': timedelta(days=365 * 100),  # Refresh token ham 100 yil amal qiladi
+#     'ROTATE_REFRESH_TOKENS': False,
+#     'BLACKLIST_AFTER_ROTATION': False,
+# }

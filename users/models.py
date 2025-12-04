@@ -29,20 +29,21 @@ class UserManager(BaseUserManager):
 
         return self.create_user(phone, full_name, password, **extra_fields)
 
+# Client va Driver userlar uchun model
 class AbstractUser(AbstractBaseUser, PermissionsMixin):
 
     GENDER_CHOICES = [('Male', 'Erkak'), ('Female', 'Ayol')]
     ROLE_CHOICES = [('client', 'client'), ('driver', 'driver')]
     STATUS_CHOICES = [
-        ('idle', 'Boʻsh'), ('online', 'Onlayn'), ('busy', 'Band'),
+        ('online', 'Onlayn'), ('offline', 'Offline'), ('busy', 'Band'),
         ('active', 'Faol'), ('inactive', 'Faol emas'),
     ]
 
     role = models.CharField(max_length=50, choices=ROLE_CHOICES)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='idle')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='offline')
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Male')
     full_name = models.CharField(max_length=255)
-    phone = models.CharField(max_length=25, unique=True)
+    phone = models.CharField(max_length=25)
     avatar = models.ImageField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
@@ -63,12 +64,12 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'phone'
+    USERNAME_FIELD = 'id'
     REQUIRED_FIELDS = ['full_name']
 
     def save(self, *args, **kwargs):
-        if self.role == 'driver' and self.status not in ['idle', 'online', 'busy']:
-            raise ValueError("Driver status must be 'idle', 'online', or 'busy'")
+        if self.role == 'driver' and self.status not in ['offline', 'online', 'busy']:
+            raise ValueError("Driver status must be 'online', 'offline', or 'busy'")
         if self.role == 'client' and self.status not in ['active', 'inactive']:
             raise ValueError("Client status must be 'active' or 'inactive'")
         super().save(*args, **kwargs)
@@ -80,4 +81,5 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
         verbose_name = 'User'
         verbose_name_plural = 'Users'
         ordering = ['created_at']
+        unique_together = ('phone', 'role')
 

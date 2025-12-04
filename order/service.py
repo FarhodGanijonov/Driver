@@ -4,10 +4,16 @@ from users.models import AbstractUser
 
 
 async def assign_driver(order):
+    """
+        Berilgan orderga mavjud bo‘lgan online driverni biriktiradi va
+        driver ham, client ham WebSocket orqali real vaqt xabari oladi.
+        Agar hech qanday driver topilmasa, clientga xabar yuboriladi.
+
+    """
     driver = await AbstractUser.objects.filter(
         role="driver",
         is_online=True,
-        status="idle"
+        status="online"
     ).afirst()  # async ORM
 
     channel_layer = get_channel_layer()
@@ -27,7 +33,7 @@ async def assign_driver(order):
         await channel_layer.group_send(
             f"driver_{driver.id}",
             {
-                "type": "driver.assigned",
+                "type": "order_assigned",
                 "order_id": order.id,
                 "client_id": order.client.id,
                 "client_name": order.client.full_name,
@@ -43,7 +49,7 @@ async def assign_driver(order):
         await channel_layer.group_send(
             f"client_{order.client.id}",
             {
-                "type": "order.assigned",
+                "type": "order_assigned",
                 "order_id": order.id,
                 "driver_id": driver.id,
                 "driver_name": driver.full_name,
@@ -66,3 +72,5 @@ async def assign_driver(order):
             }
         )
         return None
+
+

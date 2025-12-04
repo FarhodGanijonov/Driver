@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.gis.db import models as gis_models
 from users.models import AbstractUser
 
+# Order modeli
 class Order(models.Model):
     STATUS_CHOICES = [
         ('CREATED', 'Created'),
@@ -31,6 +32,7 @@ class Order(models.Model):
     )
 
     client_is_finished = models.BooleanField(default=False)
+    driver_is_finished = models.BooleanField(default=False)
     location = gis_models.PointField(
         srid=4326,
         blank=True,

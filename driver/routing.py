@@ -1,6 +1,7 @@
 from django.urls import re_path
 from driver.consumer import DriverConsumer
 
+# Driver websocket url
 websocket_urlpatterns = [
-    re_path(r"ws/driver/(?P<driver_id>\d+)/$", DriverConsumer.as_asgi()),
+    re_path(r"ws/driver/$", DriverConsumer.as_asgi()),
 ]
